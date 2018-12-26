@@ -3,6 +3,7 @@
 
 import scrapy
 import re
+from selenium import webdriver
 from jd_book.items import JdBookItem
 
 #处理下获取到的url_str字符串，返回最终访问京东的合适的url
@@ -16,11 +17,14 @@ def combine_url(url_str):
     return url
 
 class JdSpider(scrapy.Spider):
-        name = 'jd_home'
+        name = 'jd_book'
         allowed_domains = ['jd.com']
         start_urls = [
             "https://book.jd.com/booksort.html"
         ]
+
+        def __init__(self):
+            self.driver = webdriver.Firefox()
         def parse(self,response):
                 for sel in response.xpath('//*[@id="booksort"]/div[@class="mc"]/dl/dd/em'):
                         item = JdBookItem()
@@ -28,7 +32,11 @@ class JdSpider(scrapy.Spider):
                         relate_url = sel.xpath('a/@href').extract()[0]
                         nav2_url = combine_url(relate_url)
                         item['nav2_url'] = nav2_url
-                        yield scrapy.Request(url,callback=self.book_parse,meta={'item':item})
+                        yield scrapy.Request(nav2_url,callback=self.book_parse,meta={'item':item})
         def book_parse(self,reponse):
-                item =
+                print reponse.url
+                # print  self.driver.get(reponse.url)
+
+                # for sel in reponse.xpath('//*[@id="plist"]/ul/li/div'):
+                #     print sel.xpath('div[@class="p-price"]/strong[@class="J_price"]/i').extract()
 

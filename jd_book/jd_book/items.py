@@ -13,4 +13,9 @@ class JdBookItem(scrapy.Item):
     # name = scrapy.Field()
     nav2_name = scrapy.Field()
     nav2_url = scrapy.Field()
+    p_name = scrapy.Field()
+    p_price = scrapy.Field()
+    # p_name = scrapy.Field()
+    # p_name = scrapy.Field()
+    # p_name = scrapy.Field()
     pass
