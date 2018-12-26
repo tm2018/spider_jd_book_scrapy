@@ -25,7 +25,7 @@ class JdSpider(scrapy.Spider):
 
         def __init__(self):
             self.driver = webdriver.Firefox()
-            # pass
+            self.driver.set_page_load_timeout(30)
         def parse(self,response):
                 for sel in response.xpath('//*[@id="booksort"]/div[@class="mc"]/dl/dd/em'):
                         item = JdBookItem()
@@ -35,8 +35,8 @@ class JdSpider(scrapy.Spider):
                         item['nav2_url'] = nav2_url
                         yield scrapy.Request(nav2_url,callback=self.book_parse,meta={'item':item})
         def book_parse(self,reponse):
-                print "reponse.url"
-                print  self.driver.get(reponse.url)
+                self.driver.get(reponse.url)
+
 
                 # for sel in reponse.xpath('//*[@id="plist"]/ul/li/div'):
                 #     print sel.xpath('div[@class="p-price"]/strong[@class="J_price"]/i').extract()
