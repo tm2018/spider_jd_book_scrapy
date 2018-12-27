@@ -22,22 +22,44 @@ class JdSpider(scrapy.Spider):
         start_urls = [
             "https://book.jd.com/booksort.html"
         ]
-
-        def __init__(self):
-            self.driver = webdriver.Firefox()
-            self.driver.set_page_load_timeout(30)
+        #用spider的默认方式访问图书全部分类页面,获取到每个分类的地址并访问
         def parse(self,response):
                 for sel in response.xpath('//*[@id="booksort"]/div[@class="mc"]/dl/dd/em'):
-                        item = JdBookItem()
-                        item['nav2_name'] = sel.xpath('a/text()').extract()[0]
                         relate_url = sel.xpath('a/@href').extract()[0]
                         nav2_url = combine_url(relate_url)
-                        item['nav2_url'] = nav2_url
-                        yield scrapy.Request(nav2_url,callback=self.book_parse,meta={'item':item})
+                        #访问每个分类的url
+                        yield scrapy.Request(nav2_url,callback=self.book_nav2_parse)
+
+        # 访问分类url的方法
+        def book_nav2_parse(self,reponse):
+                for blank_url in reponse.xpath('//*[@id="plist"]/ul/li//*/div[@class="p-img"]/a/@href').extract():
+                    #组合成真实的url
+
+                    book_url = "%s%s" %("https:", blank_url)
+                    print '11111111111111111%s' % book_url
+                    yield scrapy.Request(book_url,callback=self.book_parse)
+
+        #这里地址是'https://item.jd.com/'类型的，在middlewares.py中判断了，会重写访问方式---selenium
         def book_parse(self,reponse):
-                self.driver.get(reponse.url)
+                print "2222222222222222222222222222222222222222222"
+                # #设置和写入item
+                item = JdBookItem()
+                item['book_name'] = "333333333333333333"
+                print 333333
+                # # from scrapy.shell import inspect_response
+                # # inspect_response(reponse,self)
+                #
+                # #xpath取各种值
+                # book_itemInfo = reponse.xpath('//*[@id="itemInfo"]')
+                # book_name = book_itemInfo.xpath('//*[@class="sku-name"]').extract()[0]
+                # book_price = book_itemInfo.xpath('//*[@class="p-price"]').extract()[0]
+                #
+                # book_introduction = reponse.xpath('//*[@id="parameter2"]')
+                # book_publishing_house = book_introduction.xpath('li[contains(@title,"出版社")]/a/text()').extract()[0]
+                # book_publishing_time = book_introduction.xpath('//*[@id="parameter2"]/li[contains(text(),"出版时间")]//../@title').extract()[0]
+                # book_edition = book_introduction.xpath('//*[@id="parameter2"]/li[contains(text(),"版次")]//../@title').extract()[0]
+                # print '%s--%s--%s--%s--%s' %(book_name,book_price,book_publishing_house,book_publishing_time,book_edition)
 
 
-                # for sel in reponse.xpath('//*[@id="plist"]/ul/li/div'):
-                #     print sel.xpath('div[@class="p-price"]/strong[@class="J_price"]/i').extract()
+
 

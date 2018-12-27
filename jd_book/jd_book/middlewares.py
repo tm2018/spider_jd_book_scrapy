@@ -4,9 +4,11 @@
 #
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
-
+import scrapy
+import time
 from scrapy import signals
-
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
 
 class JdBookSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -78,6 +80,20 @@ class JdBookDownloaderMiddleware(object):
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
+
+        #设置要爬取的地址类型
+        spider_url = 'https://item.jd.com/'
+        #如果request.url是设置得网址类型则用selenium模拟访问
+        if spider_url in request.url:
+            # 设置成用firefox浏览器来模拟访问
+            self.driver = webdriver.Firefox()
+            self.driver.set_page_load_timeout(5)
+
+            self.driver.get(request.url)
+            time.sleep(1)
+            html = self.driver.page_source
+            self.driver.quit()
+            return scrapy.http.HtmlResponse(url=request.url,body=html.encode('utf-8'),encoding='utf-8',request=request)
         return None
 
     def process_response(self, request, response, spider):
