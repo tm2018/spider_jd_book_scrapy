@@ -5,6 +5,7 @@ import scrapy
 import re
 from selenium import webdriver
 from jd_book.items import JdBookItem
+from urlparse import urlparse
 
 #处理下获取到的url_str字符串，返回最终访问京东的合适的url
 def combine_url(url_str):
@@ -42,23 +43,24 @@ class JdSpider(scrapy.Spider):
         def book_parse(self,reponse):
                 print "2222222222222222222222222222222222222222222"
                 # #设置和写入item
-                item = JdBookItem()
-                item['book_name'] = "333333333333333333"
-                print 333333
-                # # from scrapy.shell import inspect_response
-                # # inspect_response(reponse,self)
+                html = url
+                # item = JdBookItem()
+                # item['book_name'] = "333333333333333333"
+                # print 333333
+                # # # from scrapy.shell import inspect_response
+                # # # inspect_response(reponse,self)
+                # #
+                # #xpath取各种值
+                # book_itemInfo = reponse.xpath('//*[@id="itemInfo"]')
+                # book_name = book_itemInfo.xpath('//*[@class="sku-name"]').extract()[0]
+                # book_price = book_itemInfo.xpath('//*[@class="p-price"]').extract()[0]
                 #
-                #xpath取各种值
-                book_itemInfo = reponse.xpath('//*[@id="itemInfo"]')
-                book_name = book_itemInfo.xpath('//*[@class="sku-name"]').extract()[0]
-                book_price = book_itemInfo.xpath('//*[@class="p-price"]').extract()[0]
-
-                book_introduction = reponse.xpath('//*[@id="parameter2"]')
-                book_publishing_house = book_introduction.xpath('li[contains(@title,"出版社")]/a/text()').extract()[0]
-                book_publishing_time = book_introduction.xpath('//*[@id="parameter2"]/li[contains(text(),"出版时间")]//../@title').extract()[0]
-                book_edition = book_introduction.xpath('//*[@id="parameter2"]/li[contains(text(),"版次")]//../@title').extract()[0]
-                # item["book_name"] = book_name
-                yield item
+                # book_introduction = reponse.xpath('//*[@id="parameter2"]')
+                # book_publishing_house = book_introduction.xpath('li[contains(@title,"出版社")]/a/text()').extract()[0]
+                # book_publishing_time = book_introduction.xpath('//*[@id="parameter2"]/li[contains(text(),"出版时间")]//../@title').extract()[0]
+                # book_edition = book_introduction.xpath('//*[@id="parameter2"]/li[contains(text(),"版次")]//../@title').extract()[0]
+                # # item["book_name"] = book_name
+                # yield item
 
 
 
