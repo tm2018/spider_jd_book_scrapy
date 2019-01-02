@@ -87,13 +87,17 @@ class JdBookDownloaderMiddleware(object):
         if spider_url in request.url:
             print "333333333333333333333333333333333333333333333333333333%s" %request.url
             # 设置成用firefox浏览器来模拟访问
-            self.driver = webdriver.Firefox()
-            self.driver.set_page_load_timeout(20)
-            self.driver.get(request.url)
-            time.sleep(1)
-            WebDriverWait(self.driver, 10)
-            html = self.driver.page_source
-            self.driver.quit()
+            # self.driver = webdriver.Firefox()
+            # self.driver.set_page_load_timeout(20)
+            # self.driver.get(request.url)
+            # time.sleep(1)
+            # WebDriverWait(self.driver, 10)
+            # html = self.driver.page_source
+            # self.driver.quit()
+            driver = webdriver.PhantomJS()
+            driver.page_source.encode('utf-8')
+            html = driver.get(request.url)
+            driver.quit()
             return scrapy.http.HtmlResponse(url=request.url,body=html.encode('utf-8'),encoding='utf-8',request=request)
         return None
 
