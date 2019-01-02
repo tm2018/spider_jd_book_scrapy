@@ -94,9 +94,10 @@ class JdBookDownloaderMiddleware(object):
             # WebDriverWait(self.driver, 10)
             # html = self.driver.page_source
             # self.driver.quit()
-            driver = webdriver.PhantomJS()
-            driver.page_source.encode('utf-8')
-            html = driver.get(request.url)
+            driver = webdriver.PhantomJS("C:\\Users\\sisyphe\\Downloads\\phantomjs-2.1.1-windows\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe")
+            driver.get(request.url)
+            html = driver.page_source.encode('utf-8')
+            print html
             driver.quit()
             return scrapy.http.HtmlResponse(url=request.url,body=html.encode('utf-8'),encoding='utf-8',request=request)
         return None
